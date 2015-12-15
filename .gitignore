@@ -1,0 +1,13 @@
+.vagrant
+.idea
+*.iml
+*.ipr
+*.iws
+.DS_Store
+*~
+.anjuta
+*.pyc
+brain.br
+session.ses
+audio-profile/fr_FR
+audio-profile/fr_FR.lm.dmp
