@@ -120,13 +120,14 @@ class Brain(object):
                 self.kernel.setPredicate(pred, value, self.session_name)
 
     def load_modules(self):
-        os.path.walk(self.modules_dir, self.learn_step, self.lang)
-
-    def learn_step(self, lang, dirname, names):
-        for name in names:
-            if self.lang in name and name.endswith('.aiml'):
-                self.kernel.learn(os.path.join(dirname, name))
-                print("LEARNED: " + os.path.join(dirname, name))
+        file_list = []
+        for root, subFolders, files in os.walk(self.modules_dir):
+            for file in files:
+                if file.endswith('.aiml') and self.lang in file:
+                    file_list.append(os.path.join(root,file))
+        for aiml_file in file_list:
+            print("LEARNED: " + os.path.join(dirname, name))
+            self.kernel.learn(aiml_file)
 
     def reload_modules(self):
         os.remove(self.brain_file_path)
