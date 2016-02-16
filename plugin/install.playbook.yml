@@ -1,0 +1,17 @@
+---
+- name: service is installed
+  become_user: root
+  template:
+    src="{{ plugin_content_path }}/plugin/service.j2"
+    dest="/lib/systemd/system/{{ plugin_name }}.service"
+
+- name: service is loaded
+  become_user: root
+  shell: systemctl daemon-reload
+
+- name: service is restarted and enabled
+  become_user: root
+  service:
+    name="{{ plugin_name }}"
+    state=restarted
+    enabled=yes

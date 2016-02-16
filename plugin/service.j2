@@ -1,0 +1,13 @@
+[Unit]
+Description=Alfred Project - Brain module
+
+
+[Service]
+Type=simple
+User=alfred
+EnvironmentFile=/etc/default/alfred
+ExecStart=/bin/bash -c '. {{ plugin_virtualenv_path }}/bin/activate && {{ plugin_content_path }}/alfred-brain.py -i $ALFRED_SPINE_INPUT -o $ALFRED_SPINE_OUTPUT -m /var/run/alfred -b /var/run/alfred'
+
+
+[Install]
+WantedBy=multi-user.target

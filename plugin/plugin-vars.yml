@@ -1,0 +1,4 @@
+---
+alfred_plugin:
+  pip_packages:
+    - pyzmq
