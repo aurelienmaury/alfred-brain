@@ -44,11 +44,11 @@ def main():
     input_sock = zmq_ctx.socket(zmq.SUB)
     input_sock.setsockopt(zmq.SUBSCRIBE, EAR_CHANNEL)
     input_sock.connect(args.zmq_in_addr)
-    print("LISTENING TO: "+args.zmq_in_addr+" -> "+EAR_CHANNEL)
+    print("LISTENING TO: " + args.zmq_in_addr + " -> " + EAR_CHANNEL)
 
     publish_sock = zmq_ctx.socket(zmq.PUSH)
     publish_sock.connect(args.zmq_out_addr)
-    print("PUSHING TO: "+args.zmq_out_addr)
+    print("PUSHING TO: " + args.zmq_out_addr)
 
     brain = Brain(args.modules_path, args.brain_path)
 
@@ -77,14 +77,12 @@ def main():
         brain.save_session()
 
 
-
 def receive(bus):
     raw_message = bus.recv()
 
     print "zero-brain:heard:" + raw_message
 
     return raw_message.replace(EAR_CHANNEL, "", 1)
-
 
 
 class Brain(object):
@@ -128,6 +126,7 @@ class Brain(object):
         for name in names:
             if self.lang in name and name.endswith('.aiml'):
                 self.kernel.learn(os.path.join(dirname, name))
+                print("LEARNED: " + os.path.join(dirname, name))
 
     def reload_modules(self):
         os.remove(self.brain_file_path)
