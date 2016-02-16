@@ -63,11 +63,12 @@ def main():
                     if brain_response == RELOAD_TRIGGER:
                         brain.reload_modules()
                     else:
-                        print "zero-brain:say:" + SPEECH_RECOG_CHANNEL + brain_response
                         if brain_response.startswith('/alfred/'):
-                            publish_sock.send(brain_response)
+                            print "brain sends: " + brain_response
+                            publish_sock.send_string(brain_response)
                         else:
-                            publish_sock.send(SPEECH_RECOG_CHANNEL + brain_response)
+                            print "brain sends: " + SPEECH_RECOG_CHANNEL + brain_response
+                            publish_sock.send_string(SPEECH_RECOG_CHANNEL + brain_response)
             except zmq.Again:
                 pass
 
@@ -123,10 +124,10 @@ class Brain(object):
         file_list = []
         for root, subFolders, files in os.walk(self.modules_dir):
             for file in files:
-                if file.endswith('.aiml') and self.lang in file:
+                if file.endswith('.aiml'):
                     file_list.append(os.path.join(root,file))
         for aiml_file in file_list:
-            print("LEARNED: " + os.path.join(dirname, name))
+            print("LEARNED: " + aiml_file)
             self.kernel.learn(aiml_file)
 
     def reload_modules(self):
