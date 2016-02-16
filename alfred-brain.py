@@ -44,9 +44,11 @@ def main():
     input_sock = zmq_ctx.socket(zmq.SUB)
     input_sock.setsockopt(zmq.SUBSCRIBE, EAR_CHANNEL)
     input_sock.connect(args.zmq_in_addr)
+    print("LISTENING TO: "+args.zmq_in_addr+" -> "+EAR_CHANNEL)
 
     publish_sock = zmq_ctx.socket(zmq.PUSH)
     publish_sock.connect(args.zmq_out_addr)
+    print("PUSHING TO: "+args.zmq_out_addr)
 
     brain = Brain(args.modules_path, args.brain_path)
 
@@ -67,8 +69,6 @@ def main():
                             publish_sock.send(SPEECH_RECOG_CHANNEL + brain_response)
             except zmq.Again:
                 pass
-
-            print "zero-brain loop"
 
     except KeyboardInterrupt:
         pass
