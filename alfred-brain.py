@@ -56,8 +56,9 @@ def main():
         while True:
             try:
                 message = input_sock.recv_string(flags=zmq.NOBLOCK)
-                print("=> " + message + '\n')
-                brain_response = brain.kernel.respond(message, brain.session_name)
+                san_msg = message[len(EAR_CHANNEL):]
+                print("=> " + san_msg + '\n')
+                brain_response = brain.kernel.respond(san_msg, brain.session_name)
                 if brain_response:
                     if brain_response == RELOAD_TRIGGER:
                         brain.reload_modules()
