@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'amaury'
 
-import os
+import os, threading
 import aiml
 import marshal
 import zmq
@@ -52,21 +52,23 @@ def main():
 
     try:
         while True:
-            print "zero-brain loop"
-
-            message = receive(input_sock)
-
-            brain_response = brain.kernel.respond(message, brain.session_name)
-
-            if brain_response:
-                if brain_response == RELOAD_TRIGGER:
-                    brain.reload_modules()
-                else:
-                    print "zero-brain:say:" + SPEECH_RECOG_CHANNEL + brain_response
-                    if brain_response.startswith('/alfred/'):
-                        publish_sock.send(brain_response)
+            try:
+                message = input_sock.recv_string(flags=zmq.NOBLOCK)
+                print("=> " + message + '\n')
+                brain_response = brain.kernel.respond(message, brain.session_name)
+                if brain_response:
+                    if brain_response == RELOAD_TRIGGER:
+                        brain.reload_modules()
                     else:
-                        publish_sock.send(SPEECH_RECOG_CHANNEL + brain_response)
+                        print "zero-brain:say:" + SPEECH_RECOG_CHANNEL + brain_response
+                        if brain_response.startswith('/alfred/'):
+                            publish_sock.send(brain_response)
+                        else:
+                            publish_sock.send(SPEECH_RECOG_CHANNEL + brain_response)
+            except zmq.Again:
+                pass
+
+            print "zero-brain loop"
 
     except KeyboardInterrupt:
         pass
@@ -81,6 +83,7 @@ def receive(bus):
     print "zero-brain:heard:" + raw_message
 
     return raw_message.replace(EAR_CHANNEL, "", 1)
+
 
 
 class Brain(object):
