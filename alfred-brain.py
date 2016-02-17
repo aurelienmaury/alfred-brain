@@ -10,7 +10,7 @@ import argparse
 
 SELF_PATH = os.path.dirname(os.path.realpath(__file__))
 
-EAR_CHANNEL = '/alfred/hears/'
+EAR_CHANNEL = '/alfred/'
 SPEECH_RECOG_CHANNEL = '/alfred/understands/'
 RELOAD_TRIGGER = '/alfred/speech-recog/reload'
 
@@ -57,7 +57,12 @@ def main():
             try:
                 message = input_sock.recv_string(flags=zmq.NOBLOCK)
                 san_msg = message[len(EAR_CHANNEL):]
+
                 print("=> " + san_msg + '\n')
+                
+                if message == '/alfred/do/reload-brain-knowledge':
+                    brain.reload_modules()
+
                 brain_response = brain.kernel.respond(san_msg, brain.session_name)
                 if brain_response:
                     if brain_response == RELOAD_TRIGGER:

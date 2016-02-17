@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="1.0">
 
-<category><pattern>PING</pattern><template>/alfred/cli-output pong</template></category>
+<category><pattern>PING</pattern><template>/alfred/cli-output/pong</template></category>
+<category><pattern>REVISE</pattern><template>/alfred/do/reload-brain-knowledge</template></category>
 
 </aiml>
