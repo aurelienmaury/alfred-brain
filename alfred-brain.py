@@ -10,7 +10,8 @@ import argparse
 
 SELF_PATH = os.path.dirname(os.path.realpath(__file__))
 
-EAR_CHANNEL = '/alfred/'
+EAR_CHANNEL = '/alfred/hears/'
+DO_CHANNEL = '/alfred/brain/do/'
 SPEECH_RECOG_CHANNEL = '/alfred/understands/'
 RELOAD_TRIGGER = '/alfred/speech-recog/reload'
 
@@ -44,7 +45,11 @@ def main():
     input_sock = zmq_ctx.socket(zmq.SUB)
     input_sock.setsockopt(zmq.SUBSCRIBE, EAR_CHANNEL)
     input_sock.connect(args.zmq_in_addr)
+    input_sock.setsockopt(zmq.SUBSCRIBE, DO_CHANNEL)
+    input_sock.connect(args.zmq_in_addr)
+
     print("LISTENING TO: " + args.zmq_in_addr + " -> " + EAR_CHANNEL)
+    print("LISTENING TO: " + args.zmq_in_addr + " -> " + DO_CHANNEL)
 
     publish_sock = zmq_ctx.socket(zmq.PUSH)
     publish_sock.connect(args.zmq_out_addr)
