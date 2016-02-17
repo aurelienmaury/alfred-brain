@@ -43,10 +43,9 @@ def main():
     zmq_ctx = zmq.Context()
 
     input_sock = zmq_ctx.socket(zmq.SUB)
+    input_sock.connect(args.zmq_in_addr)
     input_sock.setsockopt(zmq.SUBSCRIBE, EAR_CHANNEL)
-    input_sock.connect(args.zmq_in_addr)
     input_sock.setsockopt(zmq.SUBSCRIBE, DO_CHANNEL)
-    input_sock.connect(args.zmq_in_addr)
 
     print("LISTENING TO: " + args.zmq_in_addr + " -> " + EAR_CHANNEL)
     print("LISTENING TO: " + args.zmq_in_addr + " -> " + DO_CHANNEL)
@@ -61,12 +60,16 @@ def main():
         while True:
             try:
                 message = input_sock.recv_string(flags=zmq.NOBLOCK)
+                print("=> " + message + '\n')
+
+                if message == DO_CHANNEL + 'reload-brain-knowledge':
+                    brain.reload_modules()
+                    continue
+
                 san_msg = message[len(EAR_CHANNEL):]
 
                 print("=> " + san_msg + '\n')
 
-                if message == '/alfred/do/reload-brain-knowledge':
-                    brain.reload_modules()
 
                 brain_response = brain.kernel.respond(san_msg, brain.session_name)
                 if brain_response:
