@@ -129,8 +129,9 @@ class Brain(object):
         file_list = []
         for root, subFolders, files in os.walk(self.modules_dir):
             for file in files:
-                if file.endswith('.aiml') and not 'virtualenv' in file:
-                    file_list.append(os.path.join(root,file))
+                absolute_file_path = os.path.join(root,file)
+                if absolute_file_path.endswith('.aiml') and not 'virtualenv' in absolute_file_path:
+                    file_list.append(absolute_file_path)
         for aiml_file in file_list:
             print("LEARNED: " + aiml_file)
             self.kernel.learn(aiml_file)
