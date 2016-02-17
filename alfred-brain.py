@@ -59,7 +59,7 @@ def main():
                 san_msg = message[len(EAR_CHANNEL):]
 
                 print("=> " + san_msg + '\n')
-                
+
                 if message == '/alfred/do/reload-brain-knowledge':
                     brain.reload_modules()
 
@@ -129,7 +129,7 @@ class Brain(object):
         file_list = []
         for root, subFolders, files in os.walk(self.modules_dir):
             for file in files:
-                if file.endswith('.aiml'):
+                if file.endswith('.aiml') and not 'virtualenv' in file:
                     file_list.append(os.path.join(root,file))
         for aiml_file in file_list:
             print("LEARNED: " + aiml_file)
