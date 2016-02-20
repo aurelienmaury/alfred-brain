@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'amaury'
 
-import os, threading
+import os
 import aiml
 import marshal
 import zmq
@@ -60,28 +60,24 @@ def main():
         while True:
             try:
                 message = input_sock.recv_string(flags=zmq.NOBLOCK)
-                print("=> " + message + '\n')
 
                 if message == DO_CHANNEL + 'reload-brain-knowledge':
                     brain.reload_modules()
+                    publish_sock.send_string('/alfred/cli-output/Brain has been reloaded.')
                     continue
 
                 san_msg = message[len(EAR_CHANNEL):]
 
                 print("=> " + san_msg + '\n')
 
-
                 brain_response = brain.kernel.respond(san_msg, brain.session_name)
                 if brain_response:
-                    if brain_response == RELOAD_TRIGGER:
-                        brain.reload_modules()
+                    if brain_response.startswith('/alfred/'):
+                        print "brain sends: " + brain_response
+                        publish_sock.send_string(brain_response)
                     else:
-                        if brain_response.startswith('/alfred/'):
-                            print "brain sends: " + brain_response
-                            publish_sock.send_string(brain_response)
-                        else:
-                            print "brain sends: " + SPEECH_RECOG_CHANNEL + brain_response
-                            publish_sock.send_string(SPEECH_RECOG_CHANNEL + brain_response)
+                        print "brain sends: " + SPEECH_RECOG_CHANNEL + brain_response
+                        publish_sock.send_string(SPEECH_RECOG_CHANNEL + brain_response)
             except zmq.Again:
                 pass
 
@@ -89,14 +85,6 @@ def main():
         pass
     finally:
         brain.save_session()
-
-
-def receive(bus):
-    raw_message = bus.recv()
-
-    print "zero-brain:heard:" + raw_message
-
-    return raw_message.replace(EAR_CHANNEL, "", 1)
 
 
 class Brain(object):
@@ -118,6 +106,7 @@ class Brain(object):
 
     def load_brain(self):
         if os.path.isfile(self.brain_file_path):
+
             self.kernel.bootstrap(brainFile=self.brain_file_path)
         else:
             self.load_modules()

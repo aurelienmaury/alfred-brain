@@ -6,7 +6,7 @@ Description=Alfred Project - Brain module
 Type=simple
 User=alfred
 EnvironmentFile=/etc/default/alfred
-ExecStart=/bin/bash -c '. {{ plugin_virtualenv_path }}/bin/activate && {{ plugin_content_path }}/alfred-brain.py -i $ALFRED_SPINE_OUTPUT -o $ALFRED_SPINE_INPUT -m /var/lib/alfred -b /var/run/alfred'
+ExecStart=/bin/bash -c '. {{ plugin_virtualenv_path }}/bin/activate && {{ plugin_content_path }}/alfred-brain.py -i $ALFRED_SPINE_OUTPUT -o $ALFRED_SPINE_INPUT -m /var/lib/alfred/plugins -b /var/run/alfred'
 
 
 [Install]
